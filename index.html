@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Trebuchet MS', sans-serif;
+            background-color: #f0f8ff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            color: #333;
+        }
+
+        /* Button Styling */
+        .button {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #c9a0dc;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #a07ab5;
+            transform: scale(1.05);
+        }
+
+        /* Timer and Score Styling */
+        .score-timer {
+            position: absolute;
+            left: 20px;
+            top: 80px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4b0082;
+            text-align: left;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #d9b3ff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .score-timer div {
+            margin-bottom: 8px;
+        }
+
+        /* Game Over Message Styling */
+        .game-over-message {
+            display: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(135deg, #b22222, #e67373);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+            width: 60%;
+            max-width: 400px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Control Buttons Container */
+        .control-buttons {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Control Buttons Outside the Box -->
+    <div class="control-buttons">
+        <button class="button" onclick="toggleGame()" id="start-button">Start</button>
+        <button class="button" onclick="pauseGame()" id="pause-button" style="display:none;">Pause</button>
+    </div>
+
+    <!-- Timer and Score Display -->
+    <div class="score-timer">
+        <div>Time Left: <span id="time-remaining">30</span> s</div>
+        <div>Score: <span id="score">0</span></div>
+    </div>
+
+    <!-- Centered Game Over Message with Score Display -->
+    <div class="game-over-message" id="game-over-message">
+        Game Over! <br> Your Score: <span id="final-score"></span>
+    </div>
+
+    <script>
+        let timerInterval;
+        let score = 0;
+        let timeLeft = 30; // Total time for the game
+        let gameActive = false; // Flag to check if the game is active
+        let gamePaused = false; // Flag to check if the game is paused
+
+        // Function to toggle between Start and Restart
+        function toggleGame() {
+            if (gameActive || gamePaused) {
+                resetGame(); // Restart the game if it's currently active or paused
+            } else {
+                startGame(); // Start the game if it's not active
+            }
+        }
+
+        // Start the game
+        function startGame() {
+            score = 0; // Reset score
+            timeLeft = 30; // Reset timer
+            gameActive = true; // Set game as active
+            gamePaused = false; // Set game as not paused
+            document.getElementById('score').innerText = score;
+            document.getElementById('time-remaining').innerText = timeLeft;
+            document.getElementById('start-button').innerText = 'Restart'; // Change Start to Restart
+
+            // Hide the game over message if visible
+            document.getElementById('game-over-message').style.display = 'none';
+            document.getElementById('pause-button').style.display = 'inline-block'; // Show pause button
+            document.getElementById('pause-button').innerText = 'Pause'; // Reset pause button text
+
+            // Start the countdown
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    document.getElementById('time-remaining').innerText = timeLeft;
+                } else {
+                    endGame(); // End the game when time runs out
+                }
+            }, 1000); // Decrease timer every second
+        }
+
+        // End the game and show game over message
+        function endGame() {
+            clearInterval(timerInterval); // Stop the timer
+            gameActive = false; // Set game as inactive
+            gamePaused = false; // Ensure game is not paused
+
+            // Hide the pause button
+            document.getElementById('pause-button').style.display = 'none';
+
+            // Show game over message with score
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-over-message').style.display = 'block';
+        }
+
+        // Pause the game
+        function pauseGame() {
+            if (gameActive && !gamePaused) {
+                clearInterval(timerInterval); // Clear the timer
+                gamePaused = true; // Set game as paused
+                document.getElementById('pause-button').innerText = 'Resume'; // Change pause button to resume
+            } else if (gamePaused) {
+                resumeGame(); // Call resume game if already paused
+            }
+        }
+
+        // Resume the game
+        function resumeGame() {
+            if (gamePaused) {
+                gamePaused = false; // Set game as not paused
+                document.getElementById('pause-button').innerText = 'Pause'; // Change resume back to pause
+
+                // Resume the countdown
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        document.getElementById('time-remaining').innerText = timeLeft;
+                    } else {
+                        endGame(); // End the game when time runs out
+                    }
+                }, 1000); // Decrease timer every second
+            }
+        }
+
+        // Reset the game to initial state
+        function resetGame() {
+            clearInterval(timerInterval); // Stop any existing timer
+            gameActive = false; // Set game as inactive
+            gamePaused = false; // Reset pause state
+            score = 0; // Reset score
+            timeLeft = 30; // Reset timer
+
+            // Reset button texts and display
+            document.getElementById('start-button').innerText = 'Start';
+            document.getElementById('pause-button').style.display = 'none'; // Hide the pause button
+            document.getElementById('pause-button').innerText = 'Pause'; // Reset pause button text
+
+            document.getElementById('score').innerText = score; // Update score display
+            document.getElementById('time-remaining').innerText = timeLeft; // Update timer display
+            document.getElementById('game-over-message').style.display = 'none'; // Hide game over message
+        }
+
+        // Increase score function (can be linked to game events)
+        function increaseScore() {
+            if (gameActive && !gamePaused) {
+                score++;
+                document.getElementById('score').innerText = score;
+            }
+        }
+    </script>
+</body>
+</html>
