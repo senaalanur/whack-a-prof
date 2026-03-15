@@ -1,6 +1,6 @@
 # Whack-A-Prof 🎓
 
-A browser-based whack-a-mole style game built as a group project in my second year of college. Players click on professors as they pop up to score points before the timer runs out.
+A browser-based whack-a-mole style game built as a group project. Players click on professors as they pop up to score points before the timer runs out.
 
 ## My Contributions
 I was responsible for:
