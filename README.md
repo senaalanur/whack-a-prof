@@ -8,6 +8,9 @@ I was responsible for:
 - **Timer system** — starting, stopping, and resetting the countdown timer
 - **Game state management** — handling the start, pause, resume, and end game flow
 
+## Demo
+[Click here to watch the demo](whack-a-prof-demo.mp4) 
+
 ## How to Play
 1. Click **Start** to begin the game
 2. Click on a professor as they appear to score a point
